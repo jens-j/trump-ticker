@@ -1,4 +1,4 @@
-# /*****************************************************************************
+# *****************************************************************************
 # * | File        :	  EPD_1in54.py
 # * | Author      :   Waveshare team
 # * | Function    :   Electronic paper driver
@@ -268,14 +268,14 @@ class EPD:
         pixels = image_monocolor.load()
         # print "imwidth = %d, imheight = %d",imwidth,imheight
         if(imwidth == self.width and imheight == self.height):
-            print("Vertical")
+            # print("Vertical")
             for y in range(imheight):
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
                     if pixels[x, y] == 0:
                         buf[(x + y * self.width) // 8] &= ~(0x80 >> (x % 8))
         elif(imwidth == self.height and imheight == self.width):
-            print("Horizontal")
+            # print("Horizontal")
             for y in range(imheight):
                 for x in range(imwidth):
                     newx = y

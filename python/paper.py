@@ -3,9 +3,6 @@
 import epd2in7b                               # import the display drivers
 from PIL import Image, ImageDraw, ImageFont   # import the image libraries
 
-def getLine(s):
-    line = ''
-
 
 epd = epd2in7b.EPD()                          # get the display object and assing to epd
 epd.init()                                    # initialize the display
@@ -38,8 +35,7 @@ blackImage.paste(image, (0, 0))
 blackDraw = ImageDraw.Draw(blackImage)
 redDraw   = ImageDraw.Draw(redImage)
 for i, line in enumerate(tweetLines):
-    #blackDraw.text((5, 5 + 12 * i), line, font = font, fill = 0)
-    redDraw.text(  (10, 3 + 10 * i), line, font = font, fill = 0)
+    blackDraw.text((10, 3 + 10 * i), line, font = font, fill = 0)
 
 print("Draw...")
 epd.display(epd.getbuffer(blackImage), epd.getbuffer(redImage))
