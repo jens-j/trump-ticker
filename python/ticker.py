@@ -6,6 +6,8 @@ import time
 import pprint
 from queue import Queue
 from threading import Thread
+from datetime import datetime, tzinfo
+from pytz import timezone
 import epd2in7b
 from PIL import Image, ImageDraw, ImageFont
 from twython import Twython, TwythonStreamer
@@ -72,11 +74,14 @@ class Ticker(TwythonStreamer):
 
     def update(self):
 
+        retweet = False 
+        reply   = False
+
         # get full tweet text
         while True:
             try:
                 timeline = self.twitter.get_user_timeline(
-                    screen_name='realDonaldTrump', count=5, tweet_mode='extended')
+                    screen_name='realDonaldTrump', count=1, tweet_mode='extended')
                 tweetdata = timeline[0]
                 break
             except:
@@ -84,16 +89,30 @@ class Ticker(TwythonStreamer):
                 time.sleep(1)
 
         if 'retweeted_status' in tweetdata:
-            tweet = tweetdata['retweeted_status']['full_text']
+            retweet  = True
+            tweet    = tweetdata['retweeted_status']['full_text']
+            origUser = tweetdata['retweeted_status']['user']['screen_name']
+        elif 'quoted_status' in tweetdata:
+            reply    = True
+            tweet    = tweetdata['full_text']
+            origUser = tweetdata['quoted_status']['user']['screen_name']
         else:
-            tweetdata['full_text']
+            tweet    = tweetdata['full_text']
 
         # print(len(tweetdata))
 
-        # self.pp.pprint(tweetdata)
+        # print(len(timeline))
+        # self.pp.pprint(timeline)
         print(tweet)
 
         tweetLines   = self.splitTweet(tweet)
+
+        timestring   = tweetdata['created_at'].split('+')[0].strip()
+        timestamp    = datetime.strptime(timestring, '%a %b %d %H:%M:%S')
+        # timestamp    = timestamp.astimezone(tzinfo.tzname('UTC+1'))
+        # timestamp.replace(tzinfo=timezone('Europe/Amsterdam'))
+        timestring   = timestamp.strftime('%a %b %d %m %H:%M:%S')
+
         blackImage   = Image.new('1', (epd2in7b.EPD_HEIGHT, epd2in7b.EPD_WIDTH), 255)
         redImage     = Image.new('1', (epd2in7b.EPD_HEIGHT, epd2in7b.EPD_WIDTH), 255)
         blackDraw    = ImageDraw.Draw(blackImage)
@@ -104,10 +123,19 @@ class Ticker(TwythonStreamer):
         blackImage.paste(blackImgData, (0, 0))
         redImage.paste(redImgData, (0, 0))
 
+        # draw tweet text
         for i, line in enumerate(tweetLines):
             blackDraw.text((10, 5 + 10 * i), line, font=self.font, fill=0)
 
+        # draw some tweet metadata
+        blackDraw.text((155, 82), '{}'.format(timestring), font=self.font, fill=255)
+        if retweet or reply:
+            text = 'retweeted:' if retweet else 'replied to:'
+            blackDraw.text((155, 92), text, font=self.font, fill=255)
+            blackDraw.text((155, 104), '@' + origUser, font=self.font, fill=255)
+        
         self.epd.display(self.epd.getbuffer(blackImage), self.epd.getbuffer(redImage))
+
 
 
     def on_success(self, data):
