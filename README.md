@@ -2,8 +2,8 @@
 
 ## Hardware 
 
-I use a raspberry 4B but I'm pretty sure that older pi's have the same pinout for the GPIO header so they should work too.
-The display is a 2.7" three color e-paper display from waveshare. 
+- I use a raspberry 4B but I'm pretty sure that older pi's have the same pinout for the GPIO header so they should work too.
+- The display is a 2.7" three color e-paper display from waveshare. 
 
 ## Twitter Keys
 
@@ -15,7 +15,7 @@ These keys (2 pairs) need to be filled in `keys.sjon.template` after which you m
 There are many ways on linux to run a program at startup. One of the proper ways is to run the program as a service. [Here is a nice explanation to do this.](https://tecadmin.net/setup-autorun-python-script-using-systemd/)
 
 ## Sources 
-[Display documentation](https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT_(B))
-[Display quick start guide](https://dev.to/ranewallin/getting-started-with-the-waveshare-2-7-epaper-hat-on-raspberry-pi-41m8)
-[Twitter API documentation](https://developer.twitter.com/en/docs)
-[Twitter API quick start guide](https://stackabuse.com/accessing-the-twitter-api-with-python/)
+- [Display documentation](https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT_(B))
+- [Display quick start guide](https://dev.to/ranewallin/getting-started-with-the-waveshare-2-7-epaper-hat-on-raspberry-pi-41m8)
+- [Twitter API documentation](https://developer.twitter.com/en/docs)
+- [Twitter API quick start guide](https://stackabuse.com/accessing-the-twitter-api-with-python/)
