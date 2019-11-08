@@ -3,6 +3,7 @@
 import os
 import time
 import pprint
+import json
 from queue import Queue
 from threading import Thread
 from datetime import datetime, tzinfo
@@ -14,16 +15,16 @@ from twython import Twython, TwythonStreamer
 
 class Ticker(TwythonStreamer):
 
-    APP_KEY       = '3YkdRq6EcjZZP52H2G1Xr7USq'
-    APP_SECRET    = 'nubk75G1LBwg2uZI5CUK2fVrnG91BF94rcCAFgL0Rj7DKBufzO'
-    ACCESS_KEY    = '1190403948156477440-QW3dvfPd2722VdEd3cA683DewpZEB1'
-    ACCESS_SECRET = 'O11jWcr8Zb7ATgAtbi8PIGkF24CwmNsyCClMKI1LAMfnR'
     TRUMP_ID      = '25073877'
 
     def __init__(self):
 
+        with open('../keys.json') as f:
+            KEYS = json.load(f)
+
+
         super(Ticker, self).__init__(
-            self.APP_KEY, self.APP_SECRET, self.ACCESS_KEY, self.ACCESS_SECRET)
+            KEYS['app_key'], KEYS['app_secret'], KEYS['access_key'], KEYS['access_secret'])
 
         self.pp    = pprint.PrettyPrinter()
         self.queue = Queue()
@@ -33,9 +34,10 @@ class Ticker(TwythonStreamer):
              #'/usr/share/fonts/truetype/typewriter/MonospaceTypewriter.ttf', 10)
              '/usr/share/fonts/truetype/quicksand/Quicksand-Regular.ttf', 10)
 
-        #twitter      = Twython(self.APP_KEY, self.APP_SECRET, oauth_version=2)
-        #self.twitter = Twython(self.APP_KEY, access_token=twitter.obtain_access_token())
-        self.twitter  = Twython(self.APP_KEY, self.APP_SECRET, self.ACCESS_KEY, self.ACCESS_SECRET)
+        #twitter      = Twython(KEYS['app_key'], KEYS['app_secret'], oauth_version=2)
+        #self.twitter = Twython(KEYS['app_key'], access_token=twitter.obtain_access_token())
+        self.twitter  = Twython(KEYS['app_key'], KEYS['app_secret'], 
+                                KEYS['access_key'], KEYS['access_secret'])
 
         self.update()
 
