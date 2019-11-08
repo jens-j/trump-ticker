@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-#
-# from collection import deque
+
 import os
 import time
 import pprint
@@ -11,7 +10,6 @@ from pytz import timezone
 import epd2in7b
 from PIL import Image, ImageDraw, ImageFont
 from twython import Twython, TwythonStreamer
-import http.client
 
 
 class Ticker(TwythonStreamer):
@@ -26,9 +24,6 @@ class Ticker(TwythonStreamer):
 
         super(Ticker, self).__init__(
             self.APP_KEY, self.APP_SECRET, self.ACCESS_KEY, self.ACCESS_SECRET)
-
-        #http.client.HTTPConnection._http_vsn = 10
-        #http.client.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 
         self.pp    = pprint.PrettyPrinter()
         self.queue = Queue()
@@ -45,12 +40,8 @@ class Ticker(TwythonStreamer):
         self.update()
 
         filterThread = Thread(target=self.filter)
-        # filterThread = Thread(target=self.statuses.filter,
-        #                       kwargs={'track': ['from:{:s}'.format(self.TRUMP_ID)]}) # -filter:media -filter:links
         filterThread.start()
 
-        # mainThread = Thread(target=self.run)
-        # mainThread.start()
         self.run()
 
 
@@ -89,16 +80,10 @@ class Ticker(TwythonStreamer):
                 if d['id'] == tweetId:
                     return d
             
-            # self.pp.pprint(timeline)
-            # print('tweet not in timeline')
-            # print([x['id'] for x in timeline])
             time.sleep(1)
 
 
     def update(self, tweetId=None):
-
-        # print("update {}".format(tweetId))
-        # print(type(tweetId))
 
         retweet = False 
         reply   = False
@@ -125,12 +110,6 @@ class Ticker(TwythonStreamer):
         tweet = tweet.replace('\n', ' ')
         tweet = tweet.replace('  ', ' ')
 
-        # print(len(tweetdata))
-        # print(len(timeline))
-        # self.pp.pprint(timeline[0])
-
-        #tweet = 'The Amazon Washington Post and three lowlife reporters, Matt Zapotosky, Josh Dawsey, and Carol Leonnig, wrote another Fake News story, without any sources (pure fiction), about Bill Barr & myself. We both deny this story, which they knew before they wrote it. A garbage newspaper!'
-
         tweetLines = self.splitTweet(tweet)
 
         if tweetLines == []:
@@ -146,11 +125,11 @@ class Ticker(TwythonStreamer):
         redImage     = Image.new('1', (epd2in7b.EPD_HEIGHT, epd2in7b.EPD_WIDTH), 255)
         blackDraw    = ImageDraw.Draw(blackImage)
         modulePath   = os.path.dirname(os.path.realpath(__file__))
-        blackImgData = Image.open('{}/../images/baloon2.bmp'.format(modulePath))
-        #redImgData   = Image.open('{}/../images/baloon1_red.bmp'.format(modulePath))
+        blackImgData = Image.open('{}/../images/baloon1.bmp'.format(modulePath))
+        redImgData   = Image.open('{}/../images/baloon1_red.bmp'.format(modulePath))
 
         blackImage.paste(blackImgData, (0, 0))
-        #redImage.paste(redImgData, (0, 0))
+        redImage.paste(redImgData, (0, 0))
 
         # draw tweet text
         for i, line in enumerate(tweetLines):
@@ -171,15 +150,7 @@ class Ticker(TwythonStreamer):
 
     def on_success(self, data):
 
-        # print(data['created_at'])
-        # print(data['text'])
-
         if data['user']['id_str'] == self.TRUMP_ID:
-
-            #print('')
-            #self.pp.pprint(data)
-            # print('on_success')
-            # print(data['id'])
             self.queue.put(data['id'])
 
 
@@ -191,7 +162,6 @@ class Ticker(TwythonStreamer):
     def on_exception(self, exception):
         print('exception')
         print(exception)
-        return
 
 
     def splitTweet(self, tweet):
