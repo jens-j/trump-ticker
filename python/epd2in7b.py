@@ -174,10 +174,10 @@ class EPD:
         epdconfig.spi_writebyte([data])
 
     def wait_until_idle(self):
-        print("e-Paper busy")
+        #print("e-Paper busy")
         while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
             epdconfig.delay_ms(100)
-        print("e-Paper busy release")
+        #print("e-Paper busy release")
 
     def set_lut(self):
         self.send_command(LUT_FOR_VCOM)               # vcom
